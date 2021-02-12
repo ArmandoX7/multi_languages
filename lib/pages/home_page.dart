@@ -123,8 +123,8 @@ class _HomePageState extends State<HomePage> {
                 await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
-                    firstDate: DateTime(DateTime.now().year),
-                    lastDate: DateTime(DateTime.now().year + 20));
+                    firstDate: DateTime(1850),
+                    lastDate: DateTime(2200));
               },
             ),
             SizedBox(
