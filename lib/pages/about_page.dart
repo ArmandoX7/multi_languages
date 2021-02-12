@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:multi_language/routes/route_name.dart';
 
 class AboutPage extends StatefulWidget {
   @override

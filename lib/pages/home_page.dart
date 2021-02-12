@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:multi_language/main.dart';
 import 'package:multi_language/classes/language.dart';
 import 'package:multi_language/routes/route_name.dart';
+import 'package:multi_language/localization/localization_constants.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,8 +16,10 @@ class _HomePageState extends State<HomePage> {
     showTimePicker(context: context, initialTime: TimeOfDay.now());
   }
 
-  void _changeLanguage(Language language) {
-    print(language.languageCode);
+  void _changeLanguage(Language language) async{
+    Locale _temp = await setLocale(language.languageCode);
+    
+    MyApp.setLocale(context, _temp);
   }
 
   @override
@@ -24,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       drawer: _drawerList(),
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Home Page'),
+        title: Text(getTranslated(context, 'home_page')),
         actions: [
           Padding(
             padding: EdgeInsets.all(8.0),
@@ -46,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ))
                   .toList(),
-              onChanged: (Language language){
+              onChanged: (Language language) {
                 _changeLanguage(language);
               },
             ),
@@ -63,87 +67,90 @@ class _HomePageState extends State<HomePage> {
   Form _mainForm(BuildContext context) {
     return Form(
       key: _key,
-      child: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height / 6,
-            child: Center(
-              child: Text(
-                'Personal Information',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          TextFormField(
-            validator: (val) {
-              if (val.isEmpty) {
-                return 'required field';
-              }
-
-              return null;
-            },
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Name',
-              hintText: 'Enter name',
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextFormField(
-            validator: (val) {
-              if (val.isEmpty) {
-                return 'required field';
-              }
-
-              return null;
-            },
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Email',
-              hintText: 'Enter email address',
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-                border: OutlineInputBorder(), hintText: 'Select date of birth'),
-            onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
-              await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(DateTime.now().year),
-                  lastDate: DateTime(DateTime.now().year + 20));
-            },
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          MaterialButton(
-            onPressed: () {
-              if (_key.currentState.validate()) {
-                _showSuccessDialog();
-              }
-            },
-            height: 50,
-            shape: StadiumBorder(),
-            color: Theme.of(context).primaryColor,
-            child: Center(
-              child: Text(
-                'Submit Information',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Center(
+                child: Text(
+                  getTranslated(context, 'personal_info'),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-          ),
-        ],
+            TextFormField(
+              validator: (val) {
+                if (val.isEmpty) {
+                  return getTranslated(context, 'required_field');
+                }
+
+                return null;
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: getTranslated(context, 'name'),
+                hintText: getTranslated(context, 'name_hint'),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              validator: (val) {
+                if (val.isEmpty) {
+                  return getTranslated(context, 'required_field');
+                }
+
+                return null;
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: getTranslated(context, 'email'),
+                hintText: getTranslated(context, 'email_hint'),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: getTranslated(context, 'date_of_birth')),
+              onTap: () async {
+                FocusScope.of(context).requestFocus(FocusNode());
+                await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(DateTime.now().year),
+                    lastDate: DateTime(DateTime.now().year + 20));
+              },
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            MaterialButton(
+              onPressed: () {
+                if (_key.currentState.validate()) {
+                  _showSuccessDialog();
+                }
+              },
+              height: 50,
+              shape: StadiumBorder(),
+              color: Theme.of(context).primaryColor,
+              child: Center(
+                child: Text(
+                  getTranslated(context, 'submit_info'),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -172,7 +179,7 @@ class _HomePageState extends State<HomePage> {
               size: 30,
             ),
             title: Text(
-              'About Us',
+              getTranslated(context, 'about_us'),
               style: _textSyle,
             ),
             onTap: () {
@@ -187,7 +194,7 @@ class _HomePageState extends State<HomePage> {
               size: 30,
             ),
             title: Text(
-              'Settings',
+              getTranslated(context, 'settings'),
               style: _textSyle,
             ),
             onTap: () {
@@ -199,6 +206,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  
 }
